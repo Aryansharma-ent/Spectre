@@ -15,7 +15,7 @@ export default function DebuggerSubBar({runData,onRerun,isRerunning} : DebuggerS
     <section className="h-12 border-b border-[#1f1f23]/60 bg-[#0c0c0e]/30 flex items-center justify-between px-6 shrink-0">
       <div className="flex items-center gap-2">
         <Link 
-          to="/"
+          to = {`/?projectId=${runData.projectId}`}
           className="flex items-center justify-center p-1 text-muted-foreground hover:text-white hover:bg-[#18181b] rounded transition-colors mr-1 cursor-pointer"
         >
           <ArrowLeft className="size-4" />

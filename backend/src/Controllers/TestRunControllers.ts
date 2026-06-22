@@ -136,6 +136,8 @@ const runBackgroundCapture = async (
     mismatchPixelsCount: 0,
     mismatchPercentage: 0,
     totalPixelsCompared: 0,
+    stagingUrl,        
+    productionUrl,
     stagingScreenshotUrl: `/screenshots/${stagingFilename}`,
     productionScreenshotUrl: `/screenshots/${productionFilename}`,
     diffScreenshotUrl: `/screenshots/${diffFilename}`,
@@ -175,11 +177,19 @@ const runBackgroundCapture = async (
     throw new Error("Test run not found");
   }
 
+  let stagingUrl = testRun.stagingUrl;
+  let productionUrl = testRun.productionUrl;
+
   // 2. Resolve the parent project to fetch staging & production URLs
   const project = await Project.findById(testRun.projectId);
-  if (!project) {
-    res.status(404);
-    throw new Error("Linked project details not found");
+  if(!stagingUrl || !productionUrl){
+
+    if (!project) {
+      res.status(404);
+      throw new Error("Linked project details not found");
+    }
+    stagingUrl = project.stagingUrl;
+    productionUrl = project.productionUrl;
   }
 
   // 3. Reset the document status in MongoDB back to 'RUNNING' and clear old statistics
@@ -188,6 +198,8 @@ const runBackgroundCapture = async (
   testRun.mismatchPercentage = 0;
   testRun.mismatchPixelsCount = 0;
   testRun.totalPixelsCompared = 0;
+  testRun.stagingUrl = stagingUrl,
+  testRun.productionUrl = productionUrl,
   await testRun.save();
 
   // 4. Return instant response so the frontend shows the loader instantly
@@ -200,13 +212,13 @@ const runBackgroundCapture = async (
   // 5. Extract the existing screenshot filename prefix (e.g. from "/screenshots/run_v0doyrnly_staging.png")
   // so we overwrite the exact same files on disk
   const filename = path.basename(testRun.stagingScreenshotUrl); // e.g. "run_v0doyrnly_staging.png"
-  const testRunId = filename.substring(0, filename.indexOf('_')); // e.g. "run_v0doyrnly"
+  const testRunId = filename.replace('_staging.png', ''); // e.g. "run_v0doyrnly"
 
   // 6. Spawn the background capture process using the same URLs and file prefix
   runBackgroundCapture(
     testRun._id.toString(),
-    project.stagingUrl,
-    project.productionUrl,
+    stagingUrl,
+    productionUrl,
     testRunId
   );
 });

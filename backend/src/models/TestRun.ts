@@ -6,6 +6,8 @@ export interface ITestRun extends Document{
     mismatchPercentage : number
     totalPixelsCompared : number
     mismatchPixelsCount : number
+    stagingUrl?: string    
+    productionUrl?: string   
     stagingScreenshotUrl : string,
     productionScreenshotUrl : string,
     diffScreenshotUrl : string,
@@ -41,7 +43,9 @@ const TestRunSchema = new Schema<ITestRun>({
         enum : ['PASSED','FAILED','RUNNING'],
         required : true,
     },
-     
+   
+     stagingUrl: { type: String, required: false },    
+    productionUrl: { type: String, required: false },  
   mismatchPercentage: { type: Number, required: true },
   totalPixelsCompared: { type: Number, required: true },
   mismatchPixelsCount: { type: Number, required: true },

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Play, Loader2 } from 'lucide-react'
 import { useState, useEffect } from "react"
 import { type TestRun, type Project } from "../types"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useSearchParams } from 'react-router-dom'
 import Sidebar from "@/components/Dashboard/SideBar"
 import TopBar from "@/components/Dashboard/TopBar"
 import SubBar from "@/components/Dashboard/SubBar"
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [stagingUrl,setStagingUrl] = useState<string>("")
   const [productionUrl,setProductionUrl] = useState<string>("")
   const [isTesting, setIsTesting] = useState<boolean>(false)
+  const [searchParams,setSearchParams] = useSearchParams()
   const [run,setRun] = useState<TestRun[]>([])
 
   const navigate = useNavigate()
@@ -32,6 +33,15 @@ const fetchProjects = async () => {
     const json = await res.json();
     if (json.success) {
       setProjects(json.data);
+    }
+
+    const urlProjectId = searchParams.get('projectId')
+    if(urlProjectId){
+      const matchedProject = json.data.find((p : Project) => p._id === urlProjectId  )
+      
+      if(matchedProject){
+        setSelectedProject(matchedProject)
+      }
     }
   } catch (error) {
     console.error("Failed to load projects:", error);
@@ -163,7 +173,10 @@ useEffect(()=>{
         {/* 3. Sub-bar breadcrumbs & Actions */}
         <SubBar 
           selectedProject = {selectedProject}
-          onBackToProjects={()=> setSelectedProject(null)}
+          onBackToProjects={()=> {
+            setSelectedProject(null)
+            setSearchParams({});
+          }}
            onNewProjectClick={() => setShowCreateProject(true)}
           onNewRunClick={() => setShowRunTest(true)}
         />  
@@ -200,7 +213,10 @@ useEffect(()=>{
               {projects.map((project)=>(
                 <div
                 key = {project._id}
-                onClick={() => setSelectedProject(project)}
+                onClick={() => {
+                  setSelectedProject(project)
+                   setSearchParams({ projectId: project._id });
+                }}
                 className="bg-[#0c0c0e] border border-[#1f1f23] hover:border-indigo-500/50 p-5 rounded-lg flex flex-col gap-3 cursor-pointer transition-all hover:translate-y-[-2px]"> 
                       <h3 className="font-bold text-xs text-white font-mono">{project.name}</h3>
                                     <div className="text-[11px] text-muted-foreground flex flex-col gap-1 font-mono">

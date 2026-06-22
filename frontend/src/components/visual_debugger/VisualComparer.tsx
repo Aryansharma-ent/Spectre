@@ -43,6 +43,7 @@ export default function VisualComparer({ runData }: VisualComparerProps) {
        // scale ratio so we could multiply this to our end width to get the correct bug position in our displayed image the frontend
          const scale = imgSize.width / (imgSize.naturalWidth || 1440)
 
+
   return (
     <main className="flex-1 p-6 overflow-y-auto flex flex-col gap-5 bg-black/10">
       

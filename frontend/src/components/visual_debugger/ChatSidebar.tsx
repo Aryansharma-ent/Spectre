@@ -1,6 +1,33 @@
-import { Send } from "lucide-react"
+import { Send,Loader2 } from "lucide-react"
+import { useState,useRef,useEffect } from "react"
+import axios from "axios"
+import type { TestRun } from "@/types"
 
-export default function ChatSidebar() {
+interface Message{
+  sender : 'user' | 'ai'
+  text : string
+}
+
+interface ChatSidebarProps{
+  runData : TestRun
+  chatMessages : Message[]
+  setChatMessages : React.Dispatch<React.SetStateAction<Message[]>>
+}
+
+
+export default function ChatSidebar({ runData , chatMessages , setChatMessages } : ChatSidebarProps) {
+                    
+               const [input,setInput] = useState<string>("")
+               const [loading,setLoading] = useState(false)
+               const messageEndRef = useRef<HTMLDivElement>(null)
+             
+     useEffect(()=>{
+        if(messageEndRef.current){
+          messageEndRef.current?.scrollIntoView({
+            behavior : "smooth"
+          })
+        }
+     },[chatMessages])
   return (
     <aside className="w-[380px] border-l border-[#1f1f23]/60 bg-[#0a0a0c]/40 flex flex-col shrink-0">
       
@@ -15,20 +42,45 @@ export default function ChatSidebar() {
       </div>
 
       {/* Layout Drift Anomalies list */}
-      <div className="p-4 border-b border-[#1f1f23]/60 flex flex-col gap-2.5 bg-[#0c0c0e]/30">
+      <div className="p-4 border-b h-25 border-[#1f1f23]/60 overflow-y-auto flex flex-col gap-2.5 bg-[#0c0c0e]/30">
         <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block font-mono">
-          Detected Regressions (1)
+         Detected Regressions : {runData.visualBugs?.length || 0}
         </span>
+
+        
+      
+            {!runData.visualBugs || runData.visualBugs.length === 0 ? (
+              
         <div className="bg-[#101013] border border-[#1f1f23] rounded p-3 flex flex-col gap-1.5 hover:border-red-500/20 transition-all cursor-pointer">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-red-400 font-mono">🐞 button.hero-cta shifted</span>
-            <span className="text-[8px] font-mono text-muted-foreground font-semibold uppercase">Drift</span>
+               <p className="text-[10px] text-muted-foreground font-mono">No visual regressions detected.</p>
+               </div>
+               </div>
+            ) : (
+              runData.visualBugs.map((bug,index)=>(
+             <div key={runData._id}
+              onClick={()=> setInput(`Tell me about Bug #${index + 1} ("${bug.element}") and how to fix it.`)}>
+             <div className="bg-[#101013] border border-[#1f1f23] rounded p-3 flex flex-col gap-1.5 hover:border-red-500/20 transition-all cursor-pointer overflow-y-auto">
+          <div className="flex items-center justify-between">
+                bug element : {bug.element}
+                
+                </div>
+                </div>
+                </div>
+              ))
+            )
+          }
           </div>
+           
+          
+
+
+            
           <p className="text-[10px] text-muted-foreground leading-relaxed font-mono">
             Drift coordinates: x=45px, width mismatch detected.
           </p>
-        </div>
-      </div>
+       
+      
 
       {/* Chat Messages Log */}
       <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
