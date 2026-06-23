@@ -7,6 +7,7 @@ const ErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+    console.error("Backend error:", err);
   // If the status code is 200, but an error was thrown, default it to 500 (Internal Server Error)
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   
