@@ -3,6 +3,7 @@ import Project from "../models/Project";
 import { Request,Response } from "express";
 import AsyncHandler from 'express-async-handler'
 import { GoogleGenerativeAI} from "@google/generative-ai";
+import crypto from "crypto";
 
 export const getProjects = AsyncHandler(async(req : Request,res : Response) : Promise<void> => {
     const projects = await Project.find().sort({createdAt : -1})
@@ -22,11 +23,14 @@ export const createProject = AsyncHandler(async(req : Request,res : Response) : 
         res.status(400)
         throw new Error("Project name, stagingUrl, and productionUrl are all required.")
     }
+     
+       const apikey = crypto.randomBytes(24).toString("hex");
 
     const project = await Project.create({
         name,
         stagingUrl,
-        productionUrl
+        productionUrl,
+        apikey 
     })
 
     res.status(201).json({
@@ -143,3 +147,30 @@ Your Role and Guidelines:
         message: responseText
     });
 });
+
+
+export const generateApikey = AsyncHandler(async(req : Request,res : Response)=>{
+      const {id} = req.params
+
+      const project = await Project.findById(id)
+      if(!project){
+         res.status(404)
+         throw new Error("Cannot find the project in the database")
+      }
+
+      let token;
+      if(project.apikey){
+        res.status(400)
+        throw new Error("api key is already associated with this project")
+      }
+
+      token = crypto.randomBytes(24).toString("hex");
+
+      project.apikey = token
+      await project.save()
+
+      res.status(200).json({
+        success : true,
+        data : token
+      })
+})

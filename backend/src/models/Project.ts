@@ -5,6 +5,7 @@ interface IProject extends Document {
     stagingUrl: string;
     productionUrl: string;
     createdAt: Date;
+    apikey? : string
 }
 
 const ProjectModel = new Schema<IProject>({
@@ -27,6 +28,10 @@ const ProjectModel = new Schema<IProject>({
     createdAt : {
         type : Date,
         default : Date.now
+    },
+    apikey : {
+        type : String,
+        trim : true,
     }
 });
 

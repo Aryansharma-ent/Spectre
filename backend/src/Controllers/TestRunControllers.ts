@@ -99,7 +99,27 @@ const runBackgroundCapture = async (
 
 
  export const runTestCapture = AsyncHandler(async(req : Request,res : Response): Promise<void> => {
-     const {stagingUrl,productionUrl,projectId} = req.body
+     let {stagingUrl,productionUrl,projectId} = req.body
+
+
+    const authProject = (req as any).project
+    if(authProject){
+      projectId = authProject._id
+      if(!stagingUrl) stagingUrl = authProject.stagingUrl
+      if(!productionUrl) productionUrl = authProject.productionUrl
+    }
+
+
+     // If called from frontend, load the project details by ID to get the default URLs
+     let project;
+     if (projectId) {
+         project = await Project.findById(projectId);
+     }
+     if (project) {
+         if (!stagingUrl) stagingUrl = project.stagingUrl;
+         if (!productionUrl) productionUrl = project.productionUrl;
+     }
+
 
      if(!stagingUrl || !productionUrl){
         res.status(400)
@@ -110,10 +130,7 @@ const runBackgroundCapture = async (
       console.log(`   Staging:    ${stagingUrl}`);
       console.log(`   Production: ${productionUrl}`);
      
-  let project;
-  if (projectId) {
-    project = await Project.findById(projectId);
-  }
+ 
   if (!project) {
     project = await Project.findOne({ name: 'Default Demo Project' });
   }
