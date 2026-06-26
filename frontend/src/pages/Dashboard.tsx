@@ -93,6 +93,10 @@ const handleRunProject = async(e : React.FormEvent) => {
         projectId : selectedProject?._id,
         stagingUrl,
         productionUrl
+      },{
+        headers : {
+           "x-api-key": selectedProject?.apikey
+        }
       })
 
       if(res.data.success){

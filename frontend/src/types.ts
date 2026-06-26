@@ -4,6 +4,7 @@ export interface Project {
   stagingUrl: string;
   productionUrl: string;
   createdAt: string;
+  apikey?: string;
 }
 
 export interface TestRun {

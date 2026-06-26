@@ -58,16 +58,16 @@ We are building the core visual engine of **Spectre AI (The Visual Regression De
 * [x] **Step 3**: Design the Interactive Comparison Screen (Before/After side-by-side or image slider overlay).
 * [x] **Step 4**: Connect frontend components to API endpoints (`GET /api/projects`, `GET /api/projects/:projectId/runs`).
 * [x] **Step 5**: Build the Database-Backed Asynchronous Test Run Queue (Backend creates RUNNING state instantly, spins off Puppeteer task in background, frontend polls for status updates).
-* [/] **Step 6**: Rerun Scan Button refinement (Confirming URL contexts and resolving disk file overwrites) - *Target: Tomorrow*.
-* [/] **Step 7**: Build and connect the "Ask Spectre" Chat Sidebar (Gemini multi-turn history mapping, dynamic CSS markdown parser rendering) - *Target: Tomorrow*.
+* [x] **Step 6**: Rerun Scan Button refinement (Confirming URL contexts and resolving disk file overwrites).
+* [x] **Step 7**: Build and connect the "Ask Spectre" Chat Sidebar (Gemini multi-turn history mapping, dynamic CSS markdown parser rendering).
 
 ---
 
 ## 📝 Pending Tasks (Milestone 6 — CI/CD Pipeline & CLI Automation)
 
-* [ ] **Step 1 (Backend)**: Add `apiKey` schema field to `Project` model and create an API Key generation endpoint.
-* [ ] **Step 2 (Backend)**: Build authentication middleware to restrict test run triggers via CLI to valid API keys.
-* [ ] **Step 3 (CLI)**: Write the lightweight Node.js CLI script `spectre-cli.js` to trigger scans from terminal/CI environments.
+* [x] **Step 1 (Backend)**: Add `apiKey` schema field to `Project` model and create an API Key generation endpoint.
+* [x] **Step 2 (Backend)**: Build authentication middleware to restrict test run triggers via CLI to valid API keys.
+* [x] **Step 3 (CLI)**: Write the lightweight Node.js CLI script `spectre-cli.js` to trigger scans from terminal/CI environments.
 * [ ] **Step 4 (Frontend)**: Design the Developer Settings page displaying the API key generator and copy-pasteable GitHub Actions YAML scripts.
 * [ ] **Step 5 (Automation)**: Set up a sample GitHub Action workflow configuration in our project repository.
 
